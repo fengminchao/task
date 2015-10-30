@@ -1,6 +1,7 @@
 package com.example.administrator.calculator;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -21,6 +22,8 @@ public class MainActivity extends Activity {
     String s = "";
     int pointnum = 0;
     double a, b;
+    SharedPreferences preferences;
+    SharedPreferences.Editor editor;
 
 
     @Override
@@ -28,6 +31,14 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         textView = (TextView) findViewById(R.id.textView);
+        preferences =getSharedPreferences("fengminchao",MODE_PRIVATE);
+        editor = preferences.edit();
+        float value = preferences.getFloat("value",0);
+        textView.setText(""+value);
+        if (value!=0) {
+            s = ""+value;
+            a = Double.valueOf(s);
+        }
         btn0 = (Button) findViewById(R.id.btn0);
         btn2 = (Button) findViewById(R.id.btn2);
         btn3 = (Button) findViewById(R.id.btn3);
@@ -72,7 +83,10 @@ public class MainActivity extends Activity {
             Button btn = (Button) v;
 
 //输入a或者b
-            if (btn.getId() == R.id.btn0 || btn.getId() == R.id.btn1 || btn.getId() == R.id.btn2 || btn.getId() == R.id.btn3 || btn.getId() == R.id.btn4 || btn.getId() == R.id.btn5 || btn.getId() == R.id.btn6 || btn.getId() == R.id.btn7 || btn.getId() == R.id.btn8 || btn.getId() == R.id.btn9) {
+            if (btn.getId() == R.id.btn0 || btn.getId() == R.id.btn1 || btn.getId() == R.id.btn2 ||
+                    btn.getId() == R.id.btn3 || btn.getId() == R.id.btn4 || btn.getId() == R.id.btn5
+                    || btn.getId() == R.id.btn6 || btn.getId() == R.id.btn7 || btn.getId() == R.id.btn8
+                    || btn.getId() == R.id.btn9) {
                    if(s.length()<10)
                     s += btn.getText();
                 else
@@ -95,7 +109,8 @@ public class MainActivity extends Activity {
                     textView.setText(s);
                 }
 //判断输入的符号
-                if (btn.getId() == R.id.add || btn.getId() == R.id.reduce || btn.getId() == R.id.mul || btn.getId() == R.id.divide) {
+                if (btn.getId() == R.id.add || btn.getId() == R.id.reduce || btn.getId() == R.id.mul
+                        || btn.getId() == R.id.divide) {
                     if (s == null||s.equals("")) a = 0;
                     a = Double.valueOf(s);
                     s = "";
@@ -149,6 +164,8 @@ public class MainActivity extends Activity {
                             }
                             s = ""+sum;
                             a = sum;
+                            editor.putFloat("value",(float)a);
+                            editor.commit();
                             if (s.length() > 10 || a > 999)
                                 Toast.makeText(getApplicationContext(), "结果溢出", Toast.LENGTH_SHORT).show();
                                 textView.setText(s);
@@ -162,6 +179,7 @@ public class MainActivity extends Activity {
                     b = 0;
                     pointnum = 0;
                     textView.setText(s);
+                    editor.clear();
                 }
             }
         };
